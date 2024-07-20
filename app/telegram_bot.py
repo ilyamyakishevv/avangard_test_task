@@ -121,10 +121,10 @@ async def process_my_pairs(message: types.Message) -> None:
             reply_markup=keyboard,
         )
 
-@router.callback_query(lambda callback_query: callback_query.data.startswith('delete_pair_'))
+@router.callback_query(lambda callback_query: callback_query.data.startswith("delete_pair_"))
 async def process_delete_pair(callback_query: types.CallbackQuery) -> None:
-    pair_id = callback_query.data.split('_')[-1]
-    await fetch_api(f'delete_pair/{pair_id}', 'DELETE')
+    pair_id = callback_query.data.split("_")[-1]
+    await fetch_api(f"delete_pair/{pair_id}", "DELETE")
     await bot.send_message(
         callback_query.from_user.id,
         "Пара удалена.",
