@@ -36,15 +36,3 @@ class ExternalApiInteraction:
     
 
 api_interaction = ExternalApiInteraction()
-
-
-async def main() -> None:
-    async with async_session() as db:
-        result = await api_interaction.check_treshold_prices(db)
-        print(result)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())

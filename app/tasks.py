@@ -1,6 +1,6 @@
-from celery_app import app
-from database import async_session  # Импортируйте вашу сессию из настроек базы данных
-from services import ExternalApiInteraction
+from app.celery_app import app
+from database import async_session 
+from services import api_interaction
 
 @app.task
 def check_treshold_prices_task():
@@ -8,7 +8,6 @@ def check_treshold_prices_task():
 
     async def run_check():
         async with async_session() as db:
-            api_interaction = ExternalApiInteraction()
             result = await api_interaction.check_treshold_prices(db)
             print(result)
 
