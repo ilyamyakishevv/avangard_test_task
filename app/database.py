@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import declarative_base
 from models import Base
 
 SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./currencies_pairs.db"

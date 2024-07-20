@@ -17,14 +17,14 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[CurrenciesPairsResponse])
+@router.get("/all/", response_model=List[CurrenciesPairsResponse])
 async def get_currencies_pairs(db: AsyncSession = Depends(get_async_session)):
     return await currrencies_crud.read_all(db=db)
 
 
-@router.get("/{user_tg_id}/", response_model=List[CurrenciesPairsResponse])
-async def get_user_currencies_pairs(user_tg_id: int, db: AsyncSession = Depends(get_async_session)):
-    return await currrencies_crud.read_user_pairs(db=db, user_tg_id=user_tg_id)
+@router.get("/{tg_id}/", response_model=List[CurrenciesPairsResponse])
+async def get_user_currencies_pairs(tg_id: int, db: AsyncSession = Depends(get_async_session)):
+    return await currrencies_crud.read_user_pairs(db=db, tg_id=tg_id)
 
 
 @router.post("/create_pair/", response_model=CurrenciesPairsResponse)

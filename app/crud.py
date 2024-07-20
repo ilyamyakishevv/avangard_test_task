@@ -1,6 +1,5 @@
 from typing import Type, TypeVar, List, Optional
 
-
 from sqlalchemy import insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -24,8 +23,10 @@ class CRUDBase:
         await db.refresh(obj)
         return obj
 
-    async def read_user_pairs(self, db: AsyncSession, user_tg_id: int) -> Optional[List[ModelType]]:
-        result = await db.execute(select(self.model).where(self.model.user_tg_id == user_tg_id))
+    async def read_user_pairs(self, db: AsyncSession, tg_id: int) -> Optional[List[ModelType]]:
+        stmt = select(self.model).where(self.model.user_tg_id == tg_id)
+        result = await db.execute(stmt)
+
         return result.scalars().all()
 
     async def update(

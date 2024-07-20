@@ -1,0 +1,69 @@
+version: '3.9'
+
+services:
+  fastapi:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    container_name: fastapi
+    command: ["python","main.py"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    volumes:
+      - ../:/app
+      - sqlite-data:/app/data
+    working_dir: /app/app
+
+  telegram_bot:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    container_name: telegram_bot
+    command: ["python", "telegram_bot.py"]
+    depends_on:
+      - fastapi
+    volumes:
+      - ../:/app
+      - sqlite-data:/app/data
+    working_dir: /app/app
+
+  celery_worker:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    container_name: celery_worker
+    command: ["celery", "-A", "celery_app", "worker", "--loglevel=info"]
+    depends_on:
+      - fastapi
+    volumes:
+      - ../:/app
+      - sqlite-data:/app/data
+    working_dir: /app/app
+
+  celery_beat:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    container_name: celery_beat
+    command: ["celery", "-A", "celery_app", "beat", "--loglevel=info"]
+    depends_on:
+      - fastapi
+    volumes:
+      - ../:/app
+      - sqlite-data:/app/data
+    working_dir: /app/app
+
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+  sqlite-data: 
