@@ -115,9 +115,7 @@ async def process_my_pairs(message: types.Message) -> None:
                 text="Удалить",
                 callback_data=f"delete_pair_{pair['id']}")]
         ])
-        await message.answer(
-            f"{pair['user_currency']} - Макс: 
-            {pair['max_treshold']}, Мин: {pair['min_treshold']}",
+        await message.answer(f"{pair['user_currency']} - Макс: {pair['max_treshold']}, Мин: {pair['min_treshold']}",
             reply_markup=keyboard,
         )
 

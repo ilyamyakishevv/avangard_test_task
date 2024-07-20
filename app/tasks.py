@@ -1,4 +1,4 @@
-from app.celery_app import app
+from celery_app import app
 from database import async_session 
 from services import api_interaction
 
@@ -11,4 +11,8 @@ def check_treshold_prices_task():
             result = await api_interaction.check_treshold_prices(db)
             print(result)
 
-    asyncio.run(run_check())
+    loop = asyncio.get_event_loop()
+    if loop.is_closed():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    loop.run_until_complete(run_check())
