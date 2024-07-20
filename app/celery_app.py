@@ -1,11 +1,11 @@
 from celery import Celery
 
-app = Celery('tasks', broker='redis://localhost:6379/0', backend='redis://localhost:6379/0')
+app = Celery('tasks', broker='redis://redis:6379/0', backend='redis://redis:6379/0', include=["tasks"])
 
 app.conf.beat_schedule = {
     'check-treshold-prices-every-5-minutes': {
         'task': 'tasks.check_treshold_prices_task',
-        'schedule': 30.0,
+        'schedule': 300.0,
     },
 }
 
