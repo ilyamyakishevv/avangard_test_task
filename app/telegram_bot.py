@@ -25,7 +25,11 @@ class CreatePair(StatesGroup):
     waiting_for_min_price = State()
 
 
-async def fetch_api(endpoint: str, method: str = "GET", data: dict = None) -> None:
+async def fetch_api(
+        endpoint: str,
+        method: str = "GET", 
+        data: dict = None
+        ) -> None:
     async with aiohttp.ClientSession() as session:
         url = f"{API_ENDPOINT}/{endpoint}"
         if method == "GET":
@@ -39,7 +43,7 @@ async def fetch_api(endpoint: str, method: str = "GET", data: dict = None) -> No
                 return await response.json()
 
 
-def main_menu_keyboard():
+def main_menu_keyboard() -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="Создать пару")],
@@ -50,16 +54,25 @@ def main_menu_keyboard():
     )
 
 @router.message(Command(commands=["start"]))
-async def send_welcome(message: types.Message):
-    await message.answer("Привет! Я бот для управления валютными парами.", reply_markup=main_menu_keyboard())
+async def send_welcome(message: types.Message) -> None:
+    await message.answer(
+        "Привет! Я бот для управления валютными парами.",
+        reply_markup=main_menu_keyboard()
+        )
 
 @router.message(lambda message: message.text == "Главное меню")
-async def process_main_menu(message: types.Message):
-     await message.answer("Вы вернулись в главное меню", reply_markup=main_menu_keyboard())
+async def process_main_menu(message: types.Message) -> None:
+    await message.answer(
+        "Вы вернулись в главное меню",
+        reply_markup=main_menu_keyboard()
+        )
 
 @router.message(lambda message: message.text == "Создать пару")
-async def process_create_pair(message: types.Message, state: FSMContext):
-    await message.answer("Введите валюту (например, BTC):", reply_markup=main_menu_keyboard())
+async def process_create_pair(message: types.Message, state: FSMContext) -> None:
+    await message.answer(
+        "Введите валюту (например, BTC):",
+        reply_markup=main_menu_keyboard()
+        )
     await state.set_state(CreatePair.waiting_for_currency)
 
 
@@ -92,24 +105,31 @@ async def process_min_price(message: types.Message, state: FSMContext) -> None:
 
 
 @router.message(lambda message: message.text == "Мои пары")
-async def process_my_pairs(message: types.Message):
+async def process_my_pairs(message: types.Message) -> None:
     user_tg_id = message.from_user.id
     pairs = await fetch_api(f"{user_tg_id}/", "GET")
 
     for pair in pairs:
         keyboard = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="Удалить", callback_data=f"delete_pair_{pair['id']}")]
+            [InlineKeyboardButton(
+                text="Удалить",
+                callback_data=f"delete_pair_{pair['id']}")]
         ])
         await message.answer(
-            f"{pair['user_currency']} - Макс: {pair['max_treshold']}, Мин: {pair['min_treshold']}",
+            f"{pair['user_currency']} - Макс: 
+            {pair['max_treshold']}, Мин: {pair['min_treshold']}",
             reply_markup=keyboard,
         )
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith('delete_pair_'))
-async def process_delete_pair(callback_query: types.CallbackQuery):
+async def process_delete_pair(callback_query: types.CallbackQuery) -> None:
     pair_id = callback_query.data.split('_')[-1]
     await fetch_api(f'delete_pair/{pair_id}', 'DELETE')
-    await bot.send_message(callback_query.from_user.id, "Пара удалена.", reply_markup=main_menu_keyboard())
+    await bot.send_message(
+        callback_query.from_user.id,
+        "Пара удалена.",
+        reply_markup=main_menu_keyboard()
+        )
 
 
 async def main() -> None:

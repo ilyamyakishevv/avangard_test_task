@@ -20,7 +20,7 @@ db = async_session()
 
 @app.get("/")
 async def root():
-    return "hello man!"
+    return "Hello, application startup complete!"
 
 
 if __name__ == "__main__":
